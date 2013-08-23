@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["bernard.rodier@gmail.com"]
   spec.description   = %q{Very simple pcap file handler that is not require native extension}
   spec.summary       = %q{Pure ruby gem without native exstension that handle pcap file produce by pcap library or tcpdump}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/brodier/spcap"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
