@@ -1,6 +1,9 @@
 # Spcap
 
-TODO: Write a gem description
+Simple Pcap stream handler without native extention.
+This gem respect original interface of ruby-pcap module 
+
+[![Gem Version](https://badge.fury.io/rb/spcap.png)](http://badge.fury.io/rb/spcap)
 
 ## Installation
 
