@@ -12,8 +12,11 @@ module Spcap
         if raw_data.getbyte(9) == 6 
           return TCPPacket.new(time,raw_data,len,linklayer_header_type)
         end
+      else
+        Logger.warn "Spcap::Factory only support TCP over IPv4 packet other packet are dropped Packet Headher : [#{raw_data[0,16].unpack("H*").first}]"
+        return nil
       end
-      Logger.warn "Spcap::Factory only support TCP over IPv4 packet other packet are dropped"
+      
     end
   end
 end

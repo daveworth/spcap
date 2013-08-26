@@ -25,6 +25,9 @@ module Spcap
       @istream.read(8) # flush unused  time_zone_offset_always_0, timestamp_accuracy_always_0,
       @snapshot_length = read32
       @linklayer_header_type = read32
+      # if header type is not ethernet raise an error !!
+      raise InitializeException, "Not PCAP ethernet strream is not supported"if @linklayer_header_type != 1
+      
     end
 
     def read16 ; @istream.read(2).unpack(@unpack_16).first ; end        
@@ -41,7 +44,13 @@ module Spcap
         caplen = read32
         len = read32
         raw_data = @istream.read(caplen)
-        yield Packet.new(time,raw_data,len,@linklayer_header_type)
+        @istream.read(14) # Jump ethernet header
+        if @istream.read(2).unpack("H*").first == "0800"
+          yield Factory.get_packet(time,raw_data,len,@linklayer_header_type)
+        else
+          # ignore non IPv4 packets
+          Logger.info "Non-IPv4 packets are ignored"
+        end
       end
     end
   end

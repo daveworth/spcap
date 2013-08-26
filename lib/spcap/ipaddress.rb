@@ -8,7 +8,7 @@ module Spcap
     
     # Return true if two addresses are the same address.
     def ==(other)
-      @address = other.adress
+      @address == other.adress
     end
     
     def hash
@@ -21,7 +21,7 @@ module Spcap
       to_num_s
     end
 
-    Return the value of IP address as integer.
+    # Return the value of IP address as integer.
     def to_i
       @address.unpackt("N").first
     end

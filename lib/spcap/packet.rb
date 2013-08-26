@@ -15,7 +15,6 @@ module Spcap
     def ip? ; self.kind_of?(IPPacket) ; end
     def tcp? ; self.kind_of?(TCPPacket) ; end
     def udp? ; self.kind_of?(UDPPacket) ; end
-    def time_i ; self.time.to_i; end
-    
+    def time_i ; self.time.to_i ; end
   end
 end

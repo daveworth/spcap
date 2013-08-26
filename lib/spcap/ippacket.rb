@@ -1,19 +1,14 @@
 module Spcap
   class IPPacket < Packet
-    attr_reader :src,:dst,:iph_len,:ip_len,
+    attr_reader :src,:dst,:ip_hlen,:ip_len
+    
     def initialize(time,data,len,datalink)
       super(time,data,len,datalink)
       @src = IPAddress.new(@raw_data[12,4])
       @dst = IPAddress.new(data[16,4])
-      @iph_len = @raw_data.getbyte(0) & 0x0F
+      @ip_hlen = @raw_data.getbyte(0) & 0x0F
       @ip_len = @raw_data[2,2].unpack("n").first
       
-    end
-    
-    
-    # Return header length. (Unit: 4 octets)
-    def ip_hlen
-      @raw_data.getbyte(0) & 0x0F
     end
     
     # Return data part as String.
