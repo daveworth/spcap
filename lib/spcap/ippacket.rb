@@ -13,7 +13,7 @@ module Spcap
     
     # Return data part as String.
     def ip_data
-      @raw_data[ip_hlen,self.caplen-ip_hlen]
+      @raw_data[ip_hlen*4,self.caplen-ip_hlen*4]
     end
     
     # 

@@ -9,7 +9,7 @@ module Spcap
     def tcp_ack ; ip_data[8,4].unpack("N").first ; end
     
     # Return data part as String.
-    def tcp_data ; ip_data[tcp_off,tcp_data_len] ; end
+    def tcp_data ; ip_data[tcp_off*4,tcp_data_len] ; end
     
     # Return length of data part.
     def tcp_data_len ; ip_len - ( ip_hlen * 4 ) - (tcp_hlen * 4) ; end

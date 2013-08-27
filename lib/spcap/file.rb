@@ -11,8 +11,9 @@ module Spcap
 
     MagicNumber = ["A1B2C3D4"].pack("H*")
 
-    def initialize(istream)
+    def initialize(istream,ocopystream=nil)
       @istream = istream
+      @ostream = ocopystream
       magic_number = istream.read(4)
       if magic_number == MagicNumber
         @unpack_16 = "n"
@@ -29,10 +30,26 @@ module Spcap
       raise InitializeException, "Not PCAP ethernet strream is not supported"if @linklayer_header_type != 1
       
     end
-
-    def read16 ; @istream.read(2).unpack(@unpack_16).first ; end        
     
-    def read32 ; @istream.read(4).unpack(@unpack_32).first ; end    
+    def switch_out(ocopystream)
+      @ostream = ocopystream
+    end
+    
+    def read(size)
+      buf = @istream.read(size)
+      @ostream.write(buf) unless @ostream.nil?
+      return buf
+    end
+    
+    def read16 
+      buf = read(2)
+      buf.unpack(@unpack_32).first
+    end        
+    
+    def read32 
+      buf = read(4)
+      buf.unpack(@unpack_32).first
+    end    
     #    Packets header
     #  4 Time stamp, seconds value
     #  4 Time stamp, microseconds value
@@ -43,13 +60,16 @@ module Spcap
         time = Time.at(read32,read32)
         caplen = read32
         len = read32
-        raw_data = @istream.read(caplen)
-        @istream.read(14) # Jump ethernet header
-        if @istream.read(2).unpack("H*").first == "0800"
+        # TODO : move Ethernet parsing in Packet class constructor
+        src_mac_address = read(6)
+        dst_mac_address = read(6)
+        protocol_type = read(2).unpack("n").first
+        raw_data = read(caplen-14)
+        if protocol_type == 0x0800
           yield Factory.get_packet(time,raw_data,len,@linklayer_header_type)
         else
           # ignore non IPv4 packets
-          Logger.info "Non-IPv4 packets are ignored"
+          Logger.info "Non-IPv4 packets are ignored Protocol = #{protocol_type}"
         end
       end
     end
