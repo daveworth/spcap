@@ -1,5 +1,5 @@
 module Spcap
-  class File
+  class Stream
     # File format :
     # File header
     #  4 Magic number
@@ -11,10 +11,9 @@ module Spcap
 
     MagicNumber = ["A1B2C3D4"].pack("H*")
 
-    def initialize(istream,ocopystream=nil)
+    def initialize(istream)
       @istream = istream
-      @ostream = ocopystream
-      magic_number = istream.read(4)
+      @magic_number = read(4)
       if magic_number == MagicNumber
         @unpack_16 = "n"
         @unpack_32 = "N"
@@ -23,7 +22,7 @@ module Spcap
         @unpack_32 = "V"
       end
       @major_version, @minor_version = read16, read16
-      @istream.read(8) # flush unused  time_zone_offset_always_0, timestamp_accuracy_always_0,
+      read(8) # flush unused  time_zone_offset_always_0, timestamp_accuracy_always_0,
       @snapshot_length = read32
       @linklayer_header_type = read32
       # if header type is not ethernet raise an error !!
@@ -31,13 +30,8 @@ module Spcap
       
     end
     
-    def switch_out(ocopystream)
-      @ostream = ocopystream
-    end
-    
     def read(size)
       buf = @istream.read(size)
-      @ostream.write(buf) unless @ostream.nil?
       return buf
     end
     

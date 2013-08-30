@@ -5,6 +5,11 @@ module Spcap
       super(time,data,len,datalink)
     end
     
+    def channel ; [[src,sport],[dst,dport]] ; end
+    def full_session ; channel.sort ; end
+    def session ; full_session.hash ; end    
+    def direction ; full_session == channel ; end
+    
     # Return acknowledgement number.
     def tcp_ack ; ip_data[8,4].unpack("N").first ; end
     
