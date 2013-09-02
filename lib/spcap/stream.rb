@@ -14,7 +14,7 @@ module Spcap
     def initialize(istream)
       @istream = istream
       @magic_number = read(4)
-      if magic_number == MagicNumber
+      if @magic_number == MagicNumber
         @unpack_16 = "n"
         @unpack_32 = "N"
       else
@@ -37,7 +37,7 @@ module Spcap
     
     def read16 
       buf = read(2)
-      buf.unpack(@unpack_32).first
+      buf.unpack(@unpack_16).first
     end        
     
     def read32 

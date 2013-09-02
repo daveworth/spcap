@@ -10,9 +10,9 @@ module Spcap
       @counter = 0
       @ostream = new_file
       super(istream)
+      packing = @unpack_16 + @unpack_16 + @unpack_32 + @unpack_32 + @unpack_32 + @unpack_32
       @header = @magic_number + [@major_version, @minor_version, 0, 0, @snapshot_length, 
-        @linklayer_header_type].pack(@unpack_16 + @unpack_16 + @unpack_32 + @unpack_32 + 
-        @unpack_32 + @unpack_32)
+        @linklayer_header_type].pack(packing)
     end
     
     def read(size)
