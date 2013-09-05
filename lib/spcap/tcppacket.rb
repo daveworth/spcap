@@ -39,12 +39,12 @@ module Spcap
     end
 
     # Return true if flag is set.
-    def tcp_fin? ; flags?(7) ; end
-    def tcp_syn? ; flags?(6) ; end
-    def tcp_rst? ; flags?(5) ; end
-    def tcp_psh? ; flags?(4) ; end
-    def tcp_ack? ; flags?(3) ; end
-    def tcp_urg? ; flags?(2) ; end
+    def tcp_fin? ; flag?(7) ; end
+    def tcp_syn? ; flag?(6) ; end
+    def tcp_rst? ; flag?(5) ; end
+    def tcp_psh? ; flag?(4) ; end
+    def tcp_ack? ; flag?(3) ; end
+    def tcp_urg? ; flag?(2) ; end
     
     # Return TCP data offset (header length). (Unit: 4-octets)
     def tcp_hlen ;  ( ( ip_data.getbyte(12) & 0XF0) / 16 ) ; end

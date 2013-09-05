@@ -37,7 +37,10 @@ module Spcap
       end_file
       @ostream = new_file
       @ostream.write(@header)
-      super(@ostream)
+    end
+    
+    def finalize
+      end_file
     end
     
     def each

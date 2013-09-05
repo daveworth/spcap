@@ -7,9 +7,16 @@ module Spcap
     end
     
     # Return true if two addresses are the same address.
-    def ==(other)
-      @address == other.adress
+    def <=>(other)
+      @address <=> other.address
     end
+
+    # Return true if two addresses are the same address.
+    def ==(other)
+      @address == other.address
+    end
+    
+    def eql?(other) ; self == other ; end
     
     def hash
       @address.hash

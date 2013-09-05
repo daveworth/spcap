@@ -60,7 +60,12 @@ module Spcap
         protocol_type = read(2).unpack("n").first
         raw_data = read(caplen-14)
         if protocol_type == 0x0800
-          yield Factory.get_packet(time,raw_data,len,@linklayer_header_type)
+          p = Factory.get_packet(time,raw_data,len,@linklayer_header_type)
+          if p.nil?
+            Logger.warn "Spcap::Factory return nil packet"
+          else
+            yield p
+          end
         else
           # ignore non IPv4 packets
           Logger.info "Non-IPv4 packets are ignored Protocol = #{protocol_type}"
