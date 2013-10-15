@@ -21,26 +21,20 @@ module Spcap
       return buf
     end
     
-    def new_file ; File.new(File.expand_path(@tmpname,@wpath),"w") ; end
+    def new_file ; File.new(File.expand_path(backup_name,@wpath),"w") ; end
     
     def backup_name
-      @wpath + @prefix + Time.now.strftime("%Y%m%d%H%M%S%6N") + FILENAME_EXTENTION
+      @prefix + Time.now.strftime("%Y%m%d%H%M%S%6N") + FILENAME_EXTENTION
     end
-    
-    def end_file
-      p = @ostream.to_path
-      @ostream.close
-      File.rename(p,backup_name) 
-    end
-    
+
     def switch_out
-      end_file
+      @ostream.close
       @ostream = new_file
       @ostream.write(@header)
     end
     
     def finalize
-      end_file
+      @ostream.close
     end
     
     def next
@@ -52,16 +46,5 @@ module Spcap
         end
       return pkt
     end
-    
-    # def each
-    #   super do |pkt|
-    #     @counter += 1
-    #     if @counter == @limit
-    #       switch_out
-    #       @counter = 0
-    #     end
-    #     yield pkt
-    #   end
-    # end
   end
 end
