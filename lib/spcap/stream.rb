@@ -26,10 +26,12 @@ module Spcap
       @snapshot_length = read32
       @linklayer_header_type = read32
       # if header type is not ethernet raise an error !!
-      raise InitializeException, "Not PCAP ethernet strream is not supported"if @linklayer_header_type != 1
+      raise InitializeException, "Not PCAP ethernet stream is not supported"if @linklayer_header_type != 1
       
     end
-    
+    def close
+      @istream.close
+    end
     def read(size)
       buf = @istream.read(size)
       return buf
@@ -51,26 +53,35 @@ module Spcap
     #  4 Un-truncated length of the packet data
     def each
       until(@istream.eof?)
-        time = Time.at(read32,read32)
-        caplen = read32
-        len = read32
-        # TODO : move Ethernet parsing in Packet class constructor
-        src_mac_address = read(6)
-        dst_mac_address = read(6)
-        protocol_type = read(2).unpack("n").first
-        raw_data = read(caplen-14)
-        if protocol_type == 0x0800
-          p = Factory.get_packet(time,raw_data,len,@linklayer_header_type)
-          if p.nil?
-            Logger.warn "Spcap::Factory return nil packet"
-          else
-            yield p
-          end
-        else
-          # ignore non IPv4 packets
-          Logger.info "Non-IPv4 packets are ignored Protocol = #{protocol_type}"
-        end
+        p = self.next
+        yield p unless p.nil?
       end
     end
+    
+    def eof? ; @istream.eof? ; end
+    
+    def next
+      time = Time.at(read32,read32)
+      caplen = read32
+      len = read32
+      # TODO : move Ethernet parsing in Packet class constructor
+      src_mac_address = read(6)
+      dst_mac_address = read(6)
+      protocol_type = read(2).unpack("n").first
+      raw_data = read(caplen-14)
+      if protocol_type == 0x0800
+        p = Factory.get_packet(time,raw_data,len,@linklayer_header_type)
+        if p.nil?
+          Logger.warn "Spcap::Factory return nil packet"
+        else
+          return p
+        end
+      else
+        # ignore non IPv4 packets
+        Logger.info "Non-IPv4 packets are ignored Protocol = #{protocol_type}"
+      end
+      return nil      
+    end
+    
   end
 end

@@ -16,13 +16,16 @@ end
 
 describe Spcap::Scopy do
   subject { Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'))  }
-  
+  before do
+    @counter=0
+  end
   it "must be a Spcap::Scopy" do
     subject.must_be_instance_of(Spcap::Scopy)
   end
   
   it "must handle each without error" do
-    subject.each{|p| }
+    subject.each{|p| @counter += 1}
+    @counter.must_equal(37)
     subject.must_respond_to(:each)
   end 
 end
@@ -32,10 +35,7 @@ describe Spcap::TCPPacket do
   
   subject { packet = nil
             src = Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'))  
-            src.each{|pkt|
-              packet = pkt
-              break
-            }
+            packet = src.next
             packet
           }
   before do
