@@ -15,9 +15,15 @@ describe Spcap::Stream do
 end
 
 describe Spcap::Scopy do
-  subject { Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'))  }
+  let(:temp_path) { File.join("test", "tmp")}
+  subject { Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'), wpath: temp_path)  }
   before do
     @counter=0
+  end
+  after do
+    Dir.glob("test/tmp/*.pcap").each do |temp_filename|
+      File.unlink(temp_filename)
+    end
   end
   it "must be a Spcap::Scopy" do
     subject.must_be_instance_of(Spcap::Scopy)
@@ -33,8 +39,9 @@ end
 
 describe Spcap::TCPPacket do
   
+  let(:temp_path) { File.join("test", "tmp")}
   subject { packet = nil
-            src = Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'))  
+            src = Spcap::Scopy.new(File.open('test/pcap_files/sample.pcap'), wpath: temp_path)
             packet = src.next
             packet
           }
@@ -45,6 +52,11 @@ describe Spcap::TCPPacket do
     @dport = 111  
     @channel = [[@src,@sport],[@dst,@dport]]
     @full_session = @channel.sort
+  end
+  after do
+    Dir.glob("test/tmp/*.pcap").each do |temp_filename|
+      File.unlink(temp_filename)
+    end
   end
   it "must be a Spcap::TCPPacket" do
     subject.must_be_instance_of(Spcap::TCPPacket)
