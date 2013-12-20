@@ -1,5 +1,6 @@
 module Spcap
   class Stream
+    include Enumerable
     # File format :
     # File header
     #  4 Magic number

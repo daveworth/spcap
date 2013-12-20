@@ -7,11 +7,17 @@ describe Spcap::Stream do
     subject.must_be_instance_of(Spcap::Stream)
   end
   
-  it "must handle each without error" do
-    subject.each{|p| }
+  it "is enumerable" do
     subject.must_respond_to(:each)
   end
 
+  it "must handle each without error" do
+    subject.each{|p| }
+  end
+
+  it "has a concept of length" do  # this tests the Enumerable mixin
+    subject.must_respond_to(:count)
+  end
 end
 
 describe Spcap::Scopy do
